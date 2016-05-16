@@ -17,7 +17,7 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener {
 
     private static MusicPlayer player = new MusicPlayer();
 
-    private ManagedMediaPlayer mMediaPlayer;
+    private MediaPlayer mMediaPlayer;
     private Context mContext;
     private List<Song> mQueue;
     private int mQueueIndex;
@@ -43,24 +43,29 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener {
 
         mQueue = new ArrayList<>();
         mQueueIndex = 0;
+
+        mPlayMode = PlayMode.LOOP;
     }
 
     public void setQueue(List<Song> queue, int index) {
         mQueue = queue;
         mQueueIndex = index;
+        play(getNowPlaying());
     }
 
     public void play(Song song) {
-        mMediaPlayer.reset();
         try {
+            mMediaPlayer.reset();
             mMediaPlayer.setDataSource(song.getPath());
-            mMediaPlayer.prepareAsync();
-            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mMediaPlayer.start();
-                }
-            });
+            mMediaPlayer.prepare();
+            mMediaPlayer.start();
+//            mMediaPlayer.prepareAsync();
+//            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//                @Override
+//                public void onPrepared(MediaPlayer mp) {
+//                    mMediaPlayer.start();
+//                }
+//            });
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -75,12 +80,11 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener {
     }
 
     public void next() {
-        pause();
+//        pause();
         play(getNextSong());
     }
 
     public void previous() {
-        pause();
         play(getPreviousSong());
     }
 

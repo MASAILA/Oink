@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import com.masaila.oink.event.PlayEvent;
-import com.masaila.oink.model.Song;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -35,6 +34,13 @@ public class PlayerService extends Service {
 
     @Subscribe
     public void onEvent(PlayEvent playEvent) {
-        MusicPlayer.getPlayer().play(playEvent.getSong());
+        switch (playEvent.getAction()) {
+            case PLAY:
+                MusicPlayer.getPlayer().setQueue(playEvent.getQueue(), 0);
+                break;
+            case NEXT:
+                MusicPlayer.getPlayer().next();
+                break;
+        }
     }
 }

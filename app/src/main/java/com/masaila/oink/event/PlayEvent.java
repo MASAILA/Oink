@@ -2,12 +2,20 @@ package com.masaila.oink.event;
 
 import com.masaila.oink.model.Song;
 
+import java.util.List;
+
 /**
  * Created by MASAILA on 16/5/13.
  */
 public class PlayEvent {
 
+    public enum Action {
+        PLAY, STOP, RESUME, NEXT, PREVIOES
+    }
+
+    private Action mAction;
     private Song mSong;
+    private List<Song> mQueue;
 
     public Song getSong() {
         return mSong;
@@ -15,5 +23,21 @@ public class PlayEvent {
 
     public void setSong(Song song) {
         mSong = song;
+    }
+
+    public Action getAction() {
+        return mAction;
+    }
+
+    public void setAction(Action action) {
+        mAction = action;
+    }
+
+    public List<Song> getQueue() {
+        return mQueue;
+    }
+
+    public void setQueue(List<Song> queue) {
+        mQueue = queue;
     }
 }
