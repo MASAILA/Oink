@@ -8,92 +8,110 @@ import java.io.IOException;
  * Created by MASAILA on 16/5/13.
  * 继承 MediaPlayer 拓展了状态功能
  */
-public class ManagedMediaPlayer extends MediaPlayer implements MediaPlayer.OnCompletionListener {
+public class ManagedMediaPlayer extends MediaPlayer implements MediaPlayer.OnCompletionListener,MediaPlayer.OnPreparedListener{
+
+
 
     public enum Status {
         IDLE, INITIALIZED, PREPARING, PREPARED, STARTED, PAUSED, STOPPED, COMPLETED
     }
 
-    private Status state;
+    private Status mState;
 
-    private OnCompletionListener onCompletionListener;
+    private OnCompletionListener mOnCompletionListener;
+    private OnPreparedListener mOnPreparedListener;
 
     public ManagedMediaPlayer() {
         super();
-        state = Status.IDLE;
+        mState = Status.IDLE;
+        super.setOnCompletionListener(this);
+        super.setOnPreparedListener(this);
     }
 
     @Override
     public void setDataSource(String path) throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
-        if (state == Status.IDLE) {
+        if (mState == Status.IDLE) {
             super.setDataSource(path);
-            state = Status.INITIALIZED;
+            mState = Status.INITIALIZED;
         }
     }
 
     @Override
     public void prepareAsync() {
-        if (state == Status.INITIALIZED || state == Status.STOPPED) {
+        if (mState == Status.INITIALIZED || mState == Status.STOPPED) {
             super.prepareAsync();
-            state = Status.PREPARING;
+            mState = Status.PREPARING;
         }
     }
 
     @Override
     public void prepare() throws IOException {
-        if (state == Status.INITIALIZED) {
+        if (mState == Status.INITIALIZED) {
             super.prepare();
-            state = Status.PREPARING;
+            mState = Status.PREPARING;
+        }
+    }
+
+    @Override
+    public void setOnPreparedListener(OnPreparedListener listener) {
+        this.mOnPreparedListener = listener;
+    }
+
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        mState = Status.PREPARED;
+        if (mOnPreparedListener != null) {
+            mOnPreparedListener.onPrepared(mp);
         }
     }
 
     @Override
     public void start() {
-        if (state == Status.PREPARED || state == Status.STARTED || state == Status.PAUSED
-                || state == Status.COMPLETED) {
+        if (mState == Status.PREPARED || mState == Status.STARTED || mState == Status.PAUSED
+                || mState == Status.COMPLETED) {
             super.start();
-            state = Status.STARTED;
+            mState = Status.STARTED;
         }
     }
 
     @Override
     public void setOnCompletionListener(OnCompletionListener listener) {
-        this.onCompletionListener = listener;
+        this.mOnCompletionListener = listener;
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        state = Status.COMPLETED;
-        if (onCompletionListener != null) {
-            onCompletionListener.onCompletion(mp);
+        mState = Status.COMPLETED;
+        if (mOnCompletionListener != null) {
+            mOnCompletionListener.onCompletion(mp);
         }
     }
 
     @Override
     public void stop() throws IllegalStateException {
-        if (state == Status.STARTED || state == Status.PAUSED || state == Status.COMPLETED) {
+        if (mState == Status.STARTED || mState == Status.PAUSED || mState == Status.COMPLETED) {
             super.stop();
-            state = Status.STOPPED;
+            mState = Status.STOPPED;
         }
     }
 
     @Override
     public void pause() throws IllegalStateException {
-        if (state == Status.STARTED || state == Status.PAUSED) {
+        if (mState == Status.STARTED || mState == Status.PAUSED) {
             super.pause();
-            state = Status.PAUSED;
+            mState = Status.PAUSED;
         }
     }
 
     public Status getState() {
-        return state;
+        return mState;
     }
 
     public boolean isComplete() {
-        return state == Status.COMPLETED;
+        return mState == Status.COMPLETED;
     }
 
     public boolean isPrepared() {
-        return state == Status.PREPARED;
+        return mState == Status.PREPARED;
     }
 }
