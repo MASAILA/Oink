@@ -57,8 +57,6 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener {
         try {
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(song.getPath());
-//            mMediaPlayer.prepare();
-//            mMediaPlayer.start();
             mMediaPlayer.prepareAsync();
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
@@ -80,7 +78,6 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener {
     }
 
     public void next() {
-//        pause();
         play(getNextSong());
     }
 
@@ -168,7 +165,7 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener {
         return mQueueIndex;
     }
 
-    private void relese() {
+    private void release() {
         mMediaPlayer.release();
         mMediaPlayer = null;
         mContext = null;

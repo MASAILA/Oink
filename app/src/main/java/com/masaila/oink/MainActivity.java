@@ -39,6 +39,13 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);
         startService(new Intent(this, PlayerService.class));
 
+        PlayEvent playEvent = new PlayEvent();
+        List<Song> queue = new ArrayList<>();
+        queue.add(getSong("http://m2.music.126.net/AuxCK2R5aJlTETgi8kwN3g==/5923069139252948.mp3"));
+        queue.add(getSong("http://m2.music.126.net/AuxCK2R5aJlTETgi8kwN3g==/5923069139252948.mp3"));
+        playEvent.setAction(PlayEvent.Action.PLAY);
+        playEvent.setQueue(queue);
+        EventBus.getDefault().post(playEvent);
 
     }
 

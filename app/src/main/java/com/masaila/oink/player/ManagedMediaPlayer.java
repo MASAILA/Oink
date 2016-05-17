@@ -26,17 +26,14 @@ public class ManagedMediaPlayer extends MediaPlayer implements MediaPlayer.OnCom
 
     @Override
     public void setDataSource(String path) throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
-            super.setDataSource(path);
-            mState = Status.INITIALIZED;
+        super.setDataSource(path);
+        mState = Status.INITIALIZED;
     }
 
     @Override
     public void start() {
-        if (mState == Status.INITIALIZED || mState == Status.STARTED || mState == Status.PAUSED
-                || mState == Status.COMPLETED) {
-            super.start();
-            mState = Status.STARTED;
-        }
+        super.start();
+        mState = Status.STARTED;
     }
 
     @Override
@@ -54,18 +51,14 @@ public class ManagedMediaPlayer extends MediaPlayer implements MediaPlayer.OnCom
 
     @Override
     public void stop() throws IllegalStateException {
-        if (mState == Status.STARTED || mState == Status.PAUSED || mState == Status.COMPLETED) {
-            super.stop();
-            mState = Status.STOPPED;
-        }
+        super.stop();
+        mState = Status.STOPPED;
     }
 
     @Override
     public void pause() throws IllegalStateException {
-        if (mState == Status.STARTED || mState == Status.PAUSED) {
-            super.pause();
-            mState = Status.PAUSED;
-        }
+        super.pause();
+        mState = Status.PAUSED;
     }
 
     public Status getState() {
