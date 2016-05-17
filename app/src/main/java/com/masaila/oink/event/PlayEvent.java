@@ -10,12 +10,13 @@ import java.util.List;
 public class PlayEvent {
 
     public enum Action {
-        PLAY, STOP, RESUME, NEXT, PREVIOES
+        PLAY, STOP, RESUME, NEXT, PREVIOES, SEEK
     }
 
     private Action mAction;
     private Song mSong;
     private List<Song> mQueue;
+    private int seekTo;
 
     public Song getSong() {
         return mSong;
@@ -39,5 +40,13 @@ public class PlayEvent {
 
     public void setQueue(List<Song> queue) {
         mQueue = queue;
+    }
+
+    public int getSeekTo() {
+        return seekTo;
+    }
+
+    public void setSeekTo(int seekTo) {
+        this.seekTo = seekTo;
     }
 }

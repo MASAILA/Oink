@@ -57,15 +57,15 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener {
         try {
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(song.getPath());
-            mMediaPlayer.prepare();
-            mMediaPlayer.start();
-//            mMediaPlayer.prepareAsync();
-//            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-//                @Override
-//                public void onPrepared(MediaPlayer mp) {
-//                    mMediaPlayer.start();
-//                }
-//            });
+//            mMediaPlayer.prepare();
+//            mMediaPlayer.start();
+            mMediaPlayer.prepareAsync();
+            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mMediaPlayer.start();
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -90,7 +90,7 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener {
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        previous();
+        next();
     }
 
     private Song getNowPlaying() {
@@ -131,7 +131,7 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener {
     }
 
 
-    public int getCurrentPostion() {
+    public int getCurrentPosition() {
         if (getNowPlaying() != null) {
             return mMediaPlayer.getCurrentPosition();
         }

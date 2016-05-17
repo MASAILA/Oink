@@ -3,6 +3,7 @@ package com.masaila.oink.player;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.masaila.oink.event.PlayEvent;
 
@@ -28,6 +29,20 @@ public class PlayerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        new Thread(){
+            @Override
+            public void run() {
+                while (true){
+                    Log.e("ss", String.valueOf(MusicPlayer.getPlayer().getCurrentPosition()));
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
 
         return super.onStartCommand(intent, flags, startId);
     }
