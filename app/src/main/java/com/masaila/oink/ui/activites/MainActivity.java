@@ -7,27 +7,24 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.masaila.oink.R;
-import com.masaila.oink.api.APIManager;
-import com.masaila.oink.model.AllPlaylist;
 import com.masaila.oink.model.Song;
-import com.masaila.oink.ui.fragments.DiscoverFragment;
 import com.masaila.oink.ui.fragments.TopListFragment;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity {
 
@@ -46,28 +43,11 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        setupViewPager();
-
-
-        Drawer result = new DrawerBuilder()
-                .withActivity(this)
-                .withToolbar(toolbar)
-                .addDrawerItems(
-                        //pass your items here
-                )
-                .build();
-
-        new DrawerBuilder()
-                .withActivity(this)
-                .addDrawerItems(
-                        //pass your items here
-                )
-                .withDrawerGravity(Gravity.END)
-                .append(result);
-
+        initViewPager();
+        initDrawer();
     }
 
-    private void setupViewPager() {
+    private void initViewPager() {
         mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
         mTabLayout.setCustomTabView(new SmartTabLayout.TabProvider() {
             final LayoutInflater inflater = LayoutInflater.from(mTabLayout.getContext());
@@ -95,6 +75,29 @@ public class MainActivity extends BaseActivity {
         });
         mViewPager.setAdapter(mPagerAdapter);
         mTabLayout.setViewPager(mViewPager);
+    }
+
+    private void initDrawer() {
+        PrimaryDrawerItem item1 = new PrimaryDrawerItem().withName(R.string.app_name);
+        SecondaryDrawerItem item2 = (SecondaryDrawerItem) new SecondaryDrawerItem().withName(R.string.app_name);
+
+        new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .addDrawerItems(
+                        item1,
+                        new DividerDrawerItem(),
+                        item2,
+                        new SecondaryDrawerItem().withName(R.string.app_name)
+                )
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        // do something with the clicked item :D
+                        return false;
+                    }
+                })
+                .build();
     }
 
 //    @OnClick({R.id.button_play, R.id.button_next, R.id.button_seek})
@@ -132,26 +135,18 @@ public class MainActivity extends BaseActivity {
 
         private Fragment[] fragments = new Fragment[]{
                 TopListFragment.newInstance(),
-                DiscoverFragment.newInstance(),
+                TopListFragment.newInstance(),
                 TopListFragment.newInstance(),
                 TopListFragment.newInstance()
         };
 
-        private final String[] TITLES = {"我的", "最新", "曲库", "电台"};
-
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
-
-        }
-
-        public MyPagerAdapter(FragmentManager fm, Fragment[] fragments) {
-            super(fm);
-            this.fragments = fragments;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return TITLES[position];
+            return "";
         }
 
         @Override
