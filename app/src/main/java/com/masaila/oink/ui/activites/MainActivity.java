@@ -14,7 +14,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.masaila.oink.R;
+import com.masaila.oink.api.APIManager;
+import com.masaila.oink.model.AllPlaylist;
 import com.masaila.oink.model.Song;
+import com.masaila.oink.ui.fragments.DiscoverFragment;
 import com.masaila.oink.ui.fragments.TopListFragment;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
@@ -22,6 +25,9 @@ import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity {
 
@@ -126,7 +132,7 @@ public class MainActivity extends BaseActivity {
 
         private Fragment[] fragments = new Fragment[]{
                 TopListFragment.newInstance(),
-                TopListFragment.newInstance(),
+                DiscoverFragment.newInstance(),
                 TopListFragment.newInstance(),
                 TopListFragment.newInstance()
         };
