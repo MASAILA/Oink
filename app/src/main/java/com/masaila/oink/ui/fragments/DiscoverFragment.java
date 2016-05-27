@@ -1,34 +1,30 @@
 package com.masaila.oink.ui.fragments;
 
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.github.florent37.glidepalette.GlidePalette;
 import com.masaila.oink.R;
-import com.masaila.oink.api.APIManager;
-import com.masaila.oink.model.AllPlaylist;
+import com.masaila.oink.adapter.DiscoverAdapter;
+import com.masaila.oink.api.ApiManager;
+import com.masaila.oink.listener.OnScrollFooterListener;
+import com.masaila.oink.model.HttpResult;
 import com.masaila.oink.model.Playlist;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class DiscoverFragment extends Fragment {
 
@@ -37,11 +33,9 @@ public class DiscoverFragment extends Fragment {
 
     private List<Playlist> mPlaylists;
     private DiscoverAdapter mAdapter;
+    private int mPage = 0;
 
-    DisplayMetrics mMetrics;
-
-    public DiscoverFragment() {
-    }
+    private DisplayMetrics mMetrics;
 
     public static DiscoverFragment newInstance() {
         DiscoverFragment fragment = new DiscoverFragment();
@@ -66,21 +60,54 @@ public class DiscoverFragment extends Fragment {
         mMetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
 
-        APIManager.getInstance()
-                .getAllPlaylist()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(mGetAllPlaylistSubscriber);
+        initRecyclerView();
 
         return view;
     }
 
-    Subscriber<AllPlaylist> mGetAllPlaylistSubscriber = new Subscriber<AllPlaylist>() {
+    private void initRecyclerView() {
+        mPlaylists = new ArrayList<>();
+        mAdapter = new DiscoverAdapter(getContext(), mPlaylists, mMetrics);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+        mRecyclerView.setAdapter(mAdapter);
+
+        ApiManager.getInstance()
+                .getAllPlaylist(mGetAllPlaylistSubscriber, mPage);
+        
+        //滑动到底部还有个bug 在刷新的时候 继续滑 会继续出发 onLoadMore 要在listener里面加一个isRefreshing
+        mRecyclerView.addOnScrollListener(new OnScrollFooterListener() {
+            @Override
+            public void onLoadMore() {
+                mPage += 1;
+                Log.e("onLoadMore", "page: " + mPage);
+                ApiManager.getInstance()
+                        .getAllPlaylist(new Subscriber<HttpResult>() {
+                            @Override
+                            public void onCompleted() {
+                                mAdapter.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onNext(HttpResult httpResult) {
+                                mPlaylists.remove(mPlaylists.size() - 1);
+                                mPlaylists.addAll((Collection<? extends Playlist>) httpResult.getData());
+                                mPlaylists.add(null);
+                            }
+                        }, mPage);
+            }
+        });
+    }
+
+    Subscriber<HttpResult> mGetAllPlaylistSubscriber = new Subscriber<HttpResult>() {
         @Override
         public void onCompleted() {
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-            mRecyclerView.setLayoutManager(gridLayoutManager);
-            mRecyclerView.setAdapter(mAdapter);
+            mAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -89,70 +116,11 @@ public class DiscoverFragment extends Fragment {
         }
 
         @Override
-        public void onNext(AllPlaylist allPlaylist) {
-            mPlaylists = new ArrayList<>();
-            mPlaylists.clear();
-            mPlaylists.addAll(allPlaylist.getData());
-            mAdapter = new DiscoverAdapter(getContext(), mPlaylists);
+        public void onNext(HttpResult httpResult) {
+            mPlaylists.addAll((Collection<? extends Playlist>) httpResult.getData());
+            mPlaylists.add(null);
         }
     };
-
-    class DiscoverAdapter extends RecyclerView.Adapter<DiscoverAdapter.DiscoverHolder> {
-
-        private List<Playlist> mPlaylists;
-        private Context mContext;
-
-        public DiscoverAdapter(Context context, List<Playlist> playlists) {
-            mPlaylists = playlists;
-            mContext = context;
-        }
-
-        @Override
-        public DiscoverHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new DiscoverHolder(
-                    LayoutInflater.from(mContext)
-                            .inflate(R.layout.recycler_item_discover_playlist, null, false)
-            );
-        }
-
-        @Override
-        public void onBindViewHolder(final DiscoverHolder holder, int position) {
-            holder.mTextViewTitle.setText(mPlaylists.get(position).getName());
-            holder.mTextViewAuthor.setText(mPlaylists.get(position).getAuthor());
-            holder.mImageView.setMaxHeight(540);
-            Glide.with(getContext())
-                    .load(mPlaylists.get(position).getAlbum())
-                    .override(540, 540)
-                    .centerCrop()
-                    .crossFade()
-                    .listener(GlidePalette.with(mPlaylists.get(position).getAlbum())
-                            .use(GlidePalette.Profile.MUTED_DARK)
-                            .intoBackground(holder.mLayoutContent)
-                    )
-                    .into(holder.mImageView);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mPlaylists.size();
-        }
-
-        class DiscoverHolder extends RecyclerView.ViewHolder {
-
-            private ImageView mImageView;
-            private TextView mTextViewTitle;
-            private TextView mTextViewAuthor;
-            private LinearLayout mLayoutContent;
-
-            public DiscoverHolder(View itemView) {
-                super(itemView);
-                mImageView = (ImageView) itemView.findViewById(R.id.imageView);
-                mTextViewTitle = (TextView) itemView.findViewById(R.id.textView_title);
-                mTextViewAuthor = (TextView) itemView.findViewById(R.id.textView_author);
-                mLayoutContent = (LinearLayout) itemView.findViewById(R.id.layout_content);
-            }
-        }
-    }
 
 
 }

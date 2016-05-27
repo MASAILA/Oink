@@ -14,6 +14,7 @@ import android.widget.ImageView;
 
 import com.masaila.oink.R;
 import com.masaila.oink.model.Song;
+import com.masaila.oink.ui.fragments.DiscoverFragment;
 import com.masaila.oink.ui.fragments.TopListFragment;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
@@ -35,8 +36,6 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.tab)
     SmartTabLayout mTabLayout;
 
-    private MyPagerAdapter mPagerAdapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +47,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initViewPager() {
-        mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
+        MyPagerAdapter pagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
         mTabLayout.setCustomTabView(new SmartTabLayout.TabProvider() {
             final LayoutInflater inflater = LayoutInflater.from(mTabLayout.getContext());
 
@@ -73,7 +72,7 @@ public class MainActivity extends BaseActivity {
                 return imageView;
             }
         });
-        mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setAdapter(pagerAdapter);
         mTabLayout.setViewPager(mViewPager);
     }
 
@@ -135,7 +134,7 @@ public class MainActivity extends BaseActivity {
 
         private Fragment[] fragments = new Fragment[]{
                 TopListFragment.newInstance(),
-                TopListFragment.newInstance(),
+                DiscoverFragment.newInstance(),
                 TopListFragment.newInstance(),
                 TopListFragment.newInstance()
         };
