@@ -74,7 +74,7 @@ public class DiscoverFragment extends Fragment {
 
         ApiManager.getInstance()
                 .getAllPlaylist(mGetAllPlaylistSubscriber, mPage);
-        
+
         //滑动到底部还有个bug 在刷新的时候 继续滑 会继续出发 onLoadMore 要在listener里面加一个isRefreshing
         mRecyclerView.addOnScrollListener(new OnScrollFooterListener() {
             @Override
@@ -112,7 +112,7 @@ public class DiscoverFragment extends Fragment {
 
         @Override
         public void onError(Throwable e) {
-
+            e.printStackTrace();
         }
 
         @Override

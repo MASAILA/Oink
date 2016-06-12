@@ -1,94 +1,51 @@
 
 package com.masaila.oink.model;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
 public class Playlist {
 
-    @SerializedName("name")
-    @Expose
-    private String name;
-    @SerializedName("id")
-    @Expose
-    private String id;
-    @SerializedName("album")
-    @Expose
-    private String album;
-    @SerializedName("author")
-    @Expose
-    private String author;
 
-    /**
-     * 
-     * @return
-     *     The name
-     */
-    public String getName() {
-        return name;
-    }
+  /**
+   * name : 女声细腻男声厚重，你更爱谁？
+   * id : /playlist?id=388392188
+   * album : http://p3.music.126.net/0wgeL_iDKT0iFaQFhzKDpA==/3426078235294782.jpg?param=1024y1024
+   * author : 肥肉啊肥肉
+   */
 
-    /**
-     * 
-     * @param name
-     *     The name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
+  private String name;
+  private String id;
+  private String album;
+  private String author;
 
-    /**
-     * 
-     * @return
-     *     The id
-     */
-    public String getId() {
-        return id;
-    }
+  public String getName() {
+    return name;
+  }
 
-    /**
-     * 
-     * @param id
-     *     The id
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    /**
-     * 
-     * @return
-     *     The album
-     */
-    public String getAlbum() {
-        return album;
-    }
+  public String getId() {
+    return id;
+  }
 
-    /**
-     * 
-     * @param album
-     *     The album
-     */
-    public void setAlbum(String album) {
-        this.album = album;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    /**
-     * 
-     * @return
-     *     The author
-     */
-    public String getAuthor() {
-        return author;
-    }
+  public String getAlbum() {
+    return album;
+  }
 
-    /**
-     * 
-     * @param author
-     *     The author
-     */
-    public void setAuthor(String author) {
-        this.author = author;
-    }
+  public void setAlbum(String album) {
+    this.album = album;
+  }
 
+  public String getAuthor() {
+    return author;
+  }
+
+  public void setAuthor(String author) {
+    this.author = author;
+  }
 }
+
